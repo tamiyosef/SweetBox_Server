@@ -70,7 +70,7 @@ namespace AppServer.Controllers
                 return BadRequest("Invalid user data.");
             }
 
-            // מיפוי ה-DTO למודל של ה-User
+            // יצירת יוזר חדש בהתבסס על הקלט מהמשתמש
             Models.User modeluser = new Models.User
             {
                 FullName = user_dto.FullName,
@@ -86,7 +86,6 @@ namespace AppServer.Controllers
             {
                 return Conflict("User with this email already exists.");
             }
-
 
             // הוספת המשתמש למסד הנתונים
             context.Users.Add(modeluser);
@@ -187,6 +186,75 @@ namespace AppServer.Controllers
 
             return Ok(seller);
         }
+
+        [HttpPut("sellers/{sellerId}")]
+        public async Task<IActionResult> UpdateSeller(int sellerId, [FromBody] DTO.Seller sellerDto)
+        {
+            try
+            {
+                // בדיקה אם הנתונים שהתקבלו מהלקוח תקינים
+                if (sellerDto == null)
+                {
+                    return BadRequest("Invalid seller data.");
+                }
+
+                // שליפת המוכר ממסד הנתונים לפי ה-ID שהתקבל מהנתיב
+                var existingSeller = await context.Sellers.FirstOrDefaultAsync(s => s.SellerId == sellerId);
+
+                if (existingSeller == null)
+                {
+                    return NotFound($"Seller with ID {sellerId} not found.");
+                }
+
+                // עדכון פרטי המוכר תוך כדי התעלמות מה-SellerId בגוף הבקשה
+                existingSeller.BusinessName = sellerDto.BusinessName;
+                existingSeller.BusinessAddress = sellerDto.BusinessAddress;
+                existingSeller.BusinessPhone = sellerDto.BusinessPhone;
+                existingSeller.ProfilePicture = sellerDto.ProfilePicture;
+                existingSeller.Description = sellerDto.Description;
+
+                // שמירת השינויים במסד הנתונים
+                await context.SaveChangesAsync();
+
+                return NoContent(); // החזרת תגובה ללא תוכן (מוצלח)
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPut("UpdateUserDetails")]
+        public async Task<IActionResult> UpdateUserDetails([FromBody] DTO.User userDto)
+        {
+            try
+            {
+                // Find the user in the database using the UserId
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == userDto.UserId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                // Update the user's details
+                user.FullName = userDto.FullName;
+                user.Email = userDto.Email;
+                user.UserType = userDto.UserType;
+
+                // Save the changes to the database
+                await context.SaveChangesAsync();
+
+                return Ok("User details updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+
     }
 }
 

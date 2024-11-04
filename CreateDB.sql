@@ -122,6 +122,7 @@ VALUES (2, 'Bob Cakes', '456 Cookie Ave, BakeCity', '555-5678', 'Delicious cakes
 
 select * from Users
 select * from Sellers
+select * from Products
 
 
 INSERT INTO Products (SellerId, ProductName, Description, Price, ImageUrl)
@@ -142,4 +143,5 @@ VALUES (2, 'Fruit Tart', 'Fresh fruit tart with a buttery crust and vanilla crea
 select * from Products
 INSERT INTO Users (FullName, Email, Password, UserType)
 VALUES ('Charlie Buyer', 'charliebuyer@gmail.com', '6789', '3')
+
 
