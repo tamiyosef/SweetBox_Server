@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using AppServer.Models;
 using AppServer.DTO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 
 namespace AppServer.Controllers
@@ -50,10 +51,12 @@ namespace AppServer.Controllers
                 {
                     return Unauthorized();
                 }
-                // החזרת פרטי המשתמש
+                // HttpContext.Session its an object that allows you to store temporary data for the current user.
                 HttpContext.Session.SetString("LoggedInUser", user.Email);
-                DTO.User DTO_User = new DTO.User(user);
 
+                // create a new DTO.User object based on the existing user object.
+                DTO.User DTO_User = new DTO.User(user);
+                // החזרת פרטי המשתמש
                 return Ok(DTO_User);
             }
             catch (Exception ex)
