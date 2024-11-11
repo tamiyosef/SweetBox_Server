@@ -190,7 +190,7 @@ namespace AppServer.Controllers
             return Ok(seller);
         }
 
-        [HttpPut("sellers/{sellerId}")]
+        [HttpPut("UpdateSeller/{sellerId}")]
         public async Task<IActionResult> UpdateSeller(int sellerId, [FromBody] DTO.Seller sellerDto)
         {
             try
